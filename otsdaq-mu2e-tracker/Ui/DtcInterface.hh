@@ -194,8 +194,18 @@ namespace trkdaq {
                                    const int ChannelID,
                                    const int PreampType,
                                    const DTCLib::roc_data_t dac);
-    bool FindThreshold(int Link, int ChannelID, int PreampType,
-                       float threshold, float tolerance);
+    bool FindThreshold(const int Link,
+                       const int ChannelID,
+                       const int PreampType,
+                       const float threshold,
+                       const float tolerance,
+                       DTCLib::roc_data_t& out);
+
+    bool FindThreshold(const int Link,
+                       const int ChannelID,
+                       const int PreampType,
+                       const float threshold,
+                       const float tolerance);
 
     int          ConvertSpiData(const std::vector<uint16_t>& RawData,
                                 TrkSpiData_t*                Data   ,

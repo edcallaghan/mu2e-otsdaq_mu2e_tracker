@@ -1249,8 +1249,12 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
     return rv;
   }
 
-  bool DtcInterface::FindThreshold(int Link, int ChannelID, int PreampType,
-                                  float threshold, float tolerance){
+  bool DtcInterface::FindThreshold(const int Link,
+                                   const int ChannelID,
+                                   const int PreampType,
+                                   const float threshold,
+                                   const float tolerance,
+                                   DTCLib::roc_data_t& out){
     roc_data_t lower = 0;
     roc_data_t upper = 1023;
     auto f = [this, Link, ChannelID, PreampType] (roc_data_t dac){
@@ -1266,8 +1270,20 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
     auto rv = false;
     if (fabs((-measured) - threshold) < tolerance){
       rv = true;
+      out = dac;
     }
 
+    return rv;
+  }
+
+  bool DtcInterface::FindThreshold(const int Link,
+                                   const int ChannelID,
+                                   const int PreampType,
+                                   const float threshold,
+                                   const float tolerance){
+    DTCLib::roc_data_t tmp;
+    auto rv = this->FindThreshold(Link, ChannelID, PreampType,
+                                  threshold, tolerance, tmp);
     return rv;
   }
 };
