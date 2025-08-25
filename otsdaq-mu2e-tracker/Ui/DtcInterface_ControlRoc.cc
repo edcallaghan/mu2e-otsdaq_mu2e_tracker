@@ -850,7 +850,6 @@ namespace  trkdaq {
     }
     return 0;
   }
-  
 
 //-----------------------------------------------------------------------------
   int DtcInterface::ConvertSpiData(const std::vector<uint16_t>& Data, TrkSpiData_t* Spi, int PrintLevel, std::ostream& Stream) {

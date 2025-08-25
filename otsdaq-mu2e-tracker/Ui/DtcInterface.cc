@@ -1232,7 +1232,7 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
     queried.reserve(96);
     this->ControlRoc_SetThreshold(Link, ChannelID, PreampType, dac);
     this->ControlRoc_ReadThresholds(Link, queried);
-    auto idx = 3*ChannelID + PreampType;
+    auto idx = 3*ChannelID + (1 - PreampType);
     auto rv = queried.at(idx);
     return rv;
   }
@@ -1252,7 +1252,7 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
 
     // return whether or not the search was successful
     auto rv = false;
-    if (fabs(measured - threshold) < tolerance){
+    if (fabs((-measured) - threshold) < tolerance){
       rv = true;
     }
 
