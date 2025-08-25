@@ -1228,10 +1228,22 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
                                                const int ChannelID,
                                                const int PreampType,
                                                const DTCLib::roc_data_t dac){
+    uint32_t mask_lo = 0x00000000;
+    uint32_t mask_md = 0x00000000;
+    uint32_t mask_hi = 0x00000000;
+    if (ChannelID < 32){
+      mask_lo += (1 << (ChannelID -  0));
+    }
+    else if (ChannelID < 64){
+      mask_md += (1 << (ChannelID - 32));
+    }
+    else if (ChannelID < 96){
+      mask_hi += (1 << (ChannelID - 64));
+    }
     std::vector<float> queried;
     queried.reserve(96);
     this->ControlRoc_SetThreshold(Link, ChannelID, PreampType, dac);
-    this->ControlRoc_ReadThresholds(Link, queried);
+    this->ControlRoc_ReadThresholds(Link, queried, mask_lo, mask_md, mask_hi);
     auto idx = 3*ChannelID + (1 - PreampType);
     auto rv = queried.at(idx);
     return rv;
