@@ -23,6 +23,8 @@
 #include "otsdaq-mu2e-tracker/ParseAlignment/PrintLegacyTable.hh"
 #include "otsdaq-mu2e-tracker/Ui/DtcInterfaceBase.hh"
 
+#include "otsdaq-mu2e-tracker/Ui/BisectionSearch.hh"
+
 namespace trkdaq {
   using roc_serial_t = std::string;
 
@@ -187,6 +189,13 @@ namespace trkdaq {
 // but you should still request that reg=128 read 0x8000 while reg=129 should stay at the default empty value of 0x1000
 //-----------------------------------------------------------------------------
     int          ControlRoc_SetThresholds(int Link, uint16_t* TG, int PrintLevel = 0, std::ostream& Stream = std::cout);
+// ejc
+    float ProgramAndQueryThreshold(const int Link,
+                                   const int ChannelID,
+                                   const int PreampType,
+                                   const DTCLib::roc_data_t dac);
+    bool FindThreshold(int Link, int ChannelID, int PreampType,
+                       float threshold, float tolerance);
 
     int          ConvertSpiData(const std::vector<uint16_t>& RawData,
                                 TrkSpiData_t*                Data   ,

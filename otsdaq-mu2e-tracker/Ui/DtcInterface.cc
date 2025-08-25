@@ -1221,6 +1221,43 @@ int DtcInterface::ValidateVarPatterns  (ushort* DtcData, ulong EwTag, ulong* Off
     }
     return s;
   }
+
+//-----------------------------------------------------------------------------
+// ejc
+  float DtcInterface::ProgramAndQueryThreshold(const int Link,
+                                               const int ChannelID,
+                                               const int PreampType,
+                                               const DTCLib::roc_data_t dac){
+    std::vector<float> queried;
+    queried.reserve(96);
+    this->ControlRoc_SetThreshold(Link, ChannelID, PreampType, dac);
+    this->ControlRoc_ReadThresholds(Link, queried);
+    auto idx = 3*ChannelID + PreampType;
+    auto rv = queried.at(idx);
+    return rv;
+  }
+
+  bool DtcInterface::FindThreshold(int Link, int ChannelID, int PreampType,
+                                  float threshold, float tolerance){
+    roc_data_t lower = 0;
+    roc_data_t upper = 1023;
+    auto f = [this, Link, ChannelID, PreampType] (roc_data_t dac){
+      this->ControlRoc_SetThreshold(Link, ChannelID, PreampType, dac);
+      auto rv = this->ProgramAndQueryThreshold(Link, ChannelID, PreampType, dac);
+      return rv;
+    };
+
+    auto dac = bisection_search(f, -threshold, tolerance, lower, upper);
+    auto measured = this->ProgramAndQueryThreshold(Link, ChannelID, PreampType, dac);
+
+    // return whether or not the search was successful
+    auto rv = false;
+    if (fabs(measured - threshold) < tolerance){
+      rv = true;
+    }
+
+    return rv;
+  }
 };
 
 #endif
