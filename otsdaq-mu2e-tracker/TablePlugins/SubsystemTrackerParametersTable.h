@@ -15,13 +15,20 @@
 namespace ots{
   class SubsystemTrackerParametersTable: public TableBase{
     public:
+      using Node = std::pair<std::string,ConfigurationTree>;
+      using NodeList = std::vector<Node>;
+
       SubsystemTrackerParametersTable(){ /**/ };
      ~SubsystemTrackerParametersTable(){ /**/ };
 
+      // TableBase interface
       virtual void init(ConfigurationManager*) override;
       virtual std::string getStructureAsJSON(const ConfigurationManager*) override;
       virtual std::string initPrereqsForARTDAQ(const ConfigurationManager*) override;
       virtual std::string getFclValueForARTDAQ(const ConfigurationManager*, const std::string&) override;
+
+      // supporting implementations
+      std::string generateTrkStrawStatusShort(ConfigurationManager*);
 
     protected:
       /**/
