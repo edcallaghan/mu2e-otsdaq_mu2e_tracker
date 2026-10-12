@@ -6,10 +6,15 @@
 #define _ots_SubsystemTrackerParamteresTable_h_
 
 // stl
+#include <fstream>
 #include <string>
+
+// offline
+#include "Offline/DataProducts/inc/StrawId.hh"
 
 // ots
 #include "otsdaq/ConfigurationInterface/ConfigurationManager.h"
+#include "otsdaq/Macros/TablePluginMacros.h"  //for DEFINE_OTS_TABLE
 #include "otsdaq/TableCore/TableBase.h"
 
 namespace ots{
@@ -18,14 +23,14 @@ namespace ots{
       using Node = std::pair<std::string,ConfigurationTree>;
       using NodeList = std::vector<Node>;
 
-      SubsystemTrackerParametersTable(){ /**/ };
+      SubsystemTrackerParametersTable();
      ~SubsystemTrackerParametersTable(){ /**/ };
 
       // TableBase interface
       virtual void init(ConfigurationManager*) override;
-      virtual std::string getStructureAsJSON(const ConfigurationManager*) override;
-      virtual std::string initPrereqsForARTDAQ(const ConfigurationManager*) override;
-      virtual std::string getFclValueForARTDAQ(const ConfigurationManager*, const std::string&) override;
+//    virtual std::string getStructureAsJSON(const ConfigurationManager*) override;
+//    virtual std::string initPrereqsForARTDAQ(const ConfigurationManager*) override;
+//    virtual std::string getFclValueForARTDAQ(const ConfigurationManager*, const std::string&) override;
 
       // supporting implementations
       std::string generateTrkStrawStatusShort(ConfigurationManager*);
@@ -37,3 +42,5 @@ namespace ots{
       /**/
   };
 }// namespace ots
+
+#endif

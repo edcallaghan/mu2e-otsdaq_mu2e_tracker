@@ -88,7 +88,7 @@ public:
 	void SetChannelMask(__ARGS__);
 	std::map<std::string, std::string> getFEMacroInputDefaults(
 	    const std::string&                        feMacroName,
-	    const std::map<std::string, std::string>& currentInputValues) const override;
+	    const std::map<std::string, std::string>& currentInputValues) const;
 	void NotoriousRead(__ARGS__);
 	void ConfigureDigis(__ARGS__);
 	void InitializeDigis(__ARGS__);

@@ -2,31 +2,32 @@
 // Dump ots configuration payload into Offline-compatible text and json
 // October 2026
 
-#include "otsdaq-mu2e-tracker/SubsystemTrackerParametersTable.h"
+#include "otsdaq-mu2e-tracker/TablePlugins/SubsystemTrackerParametersTable.h"
 
 namespace ots{
-  void init(ConfigurationManager* configManager){
-    __SS__ << "TODO: implement init() for "
-           << getTableName()
-           << "'"
-           << __E__;
-    __SS_ONLY_THROW__;
+  SubsystemTrackerParametersTable::SubsystemTrackerParametersTable(): TableBase("SubsystemTrackerParametersTable"){
+      /**/
+  }
 
+  void SubsystemTrackerParametersTable::init(ConfigurationManager* configManager){
     // locally lock filesystem access
 	  isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
     if (isFirstAppInContext_){
       std::string path = getenv("DBSERVICE_ONLINE_PATH");
       if (0 < path.size()){
-        path += "/" + "TrkStrawStatusShort.txt";
+        path = path + std::string("/");
+        path = path + std::string("TrkStrawStatusShort.txt");
         std::ofstream out(path);
         // TODO should this be a hard throw? or just log and move on?
         if (!out){
-          __SS__ << "Failed to open file: " << offlineTableFileName << __E__;
+          __SS__ << "Failed to open file: "
+                 << path
+                 << __E__;
           __SS_THROW__;
         }
         else{
           try{
-            auto content = generateTrkStrawStatusShort(configManager);
+            auto content = this->generateTrkStrawStatusShort(configManager);
             out << content;
             out.close();
           }
@@ -43,6 +44,7 @@ namespace ots{
     }
   }
 
+/*
   std::string SubsystemTrackerParametersTable::getStructureAsJSON(const ConfigurationManager* configManager){
     __SS__ << "TODO: implement getStructureAsJSON() for "
            << getTableName()
@@ -66,21 +68,22 @@ namespace ots{
            << __E__;
     __SS_ONLY_THROW__;
   }
+*/
 
-  std::string SubsystemTrackerParametersTable:;generateTrkStrawStatusShort(ConfigurationManager* configManager){
+  std::string SubsystemTrackerParametersTable::generateTrkStrawStatusShort(ConfigurationManager* configManager){
     std::stringstream stream;
     stream << "# TrkStrawStatusShort"; // TODO append run numbers...?
     stream << std::endl;
 
-    Node tln = configManager->getNode("SubsystemTrackerChannelsTable");
-    NodeList nodes = tln.getChildren();
+    ConfigurationTree tree = configManager->getNode("SubsystemTrackerChannelsTable");
+    NodeList nodes = tree.getChildren();
     for (const auto& node: nodes){
       // auto label = node.first;
       auto config = node.second;
-      auto label = config.get<std::string>("UID"); // TODO is this the StrawId?
-      auto numeric = static_cast<uint16_t>(label);
+      auto label = config.getNode("UID").getValue<std::string>(); // TODO is this the StrawId?
+      auto numeric = static_cast<uint16_t>(std::stoi(label));
       auto strawid = mu2e::StrawId(numeric);
-      auto enabled = config.getValue<bool>("Enabled");
+      auto enabled = config.getNode("Enabled").getValue<bool>();
 
       if (!enabled){
         std::string id = std::to_string(strawid.plane())
@@ -90,11 +93,10 @@ namespace ots{
                        + std::to_string(strawid.straw());
         stream << id << "," << "Disabled";
       }
-
-      rv = stream.str();
-      return rv;
     }
-  }
-}
 
-DEFINE_OTS_TABLE(SubsystemCalorimeterParametersTable)
+    auto rv = stream.str();
+    return rv;
+  }
+  DEFINE_OTS_TABLE(SubsystemTrackerParametersTable)
+}
